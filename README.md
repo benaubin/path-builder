@@ -70,23 +70,21 @@ ApiPath.new.moo['v1'] #=> 'api/v1/moo'
 
 Reuse even more:
 ```ruby
-ApiPath = PathBuilder.new.path.api(:version).save!['v1']
+ApiPath = ApiPath['v1']
 ApiPath.new.moo.to_s #=> 'api/v1/moo'
 ```
 
-This can help you REST...
+`break_on_empty` may help you REST...
 ```ruby
-ApiPath = PathBuilder.new.path.api(:version).save!['v1']
 UsersPath = ApiPath.users(:user_id).save!
+
 UsersPath.new.to_s #=> 'api/v1/users/user_id/'
 UsersPath.new.to_s(break_on_empty: true) #=> 'api/v1/users/'
-UsersPath.new.comments.to_s(break_on_empty: true) #=> 'api/v1/users/'
-UsersPath.new.comments.to_s('1', break_on_empty: true) #=> 'api/v1/users/1/comments'
-UsersPath.new['1'] #=> 'api/v1/users/1/'
+UsersPath.new.to_s(1, break_on_empty: true) #=> 'api/v1/users/1'
 
 # Or just:
 
-UsersPath.break_on_empty = true
+UsersPath.break_on_empty = true # PROTIP: You can set PathBuilder#break_on_empty in a config file.
 
 UsersPath.new[] #=> 'api/v1/users/'
 UsersPath.new[nil] #=> 'api/v1/users/'
@@ -97,22 +95,7 @@ UsersPath.new.comments(:comment_id).post['1'] #=> 'api/v1/users/1/comments/'
 UsersPath.new.comments(:comment_id).post['1', '2'] #=> 'api/v1/users/1/comments/2/post'
 ```
 
-Or just set it globally:
-
-```ruby
-PathBuilder.break_on_empty = true
-ApiPath = PathBuilder.new.path.api(:version).save!['v1']
-UsersPath = ApiPath.users(:user_id).save!
-ApiPath.pages(:page_id)[] #=> 'api/v1/pages'
-ApiPath.pages(:page_id)['1'] #=> 'api/v1/pages/1'
-UsersPath.new[] #=> 'api/v1/users/'
-UsersPath.new[nil] #=> 'api/v1/users/'
-UsersPath.new['1'] #=> 'api/v1/users/1'
-UsersPath.new.comments[] #=> 'api/v1/users'
-UsersPath.new.comments['1'] #=> 'api/v1/users/1/comments/'
-UsersPath.new.comments(:comment_id).post['1'] #=> 'api/v1/users/1/comments/'
-UsersPath.new.comments(:comment_id).post['1', '2'] #=> 'api/v1/users/1/comments/2/post'
-```
+Curious on how it works? Read the 88 line [source].
 
 Have fun.
 
@@ -130,3 +113,5 @@ Bug reports and pull requests are welcome on GitHub at https://github.com/[USERN
 ## License
 
 The gem is available as open source under the terms of the [MIT License](http://opensource.org/licenses/MIT).
+
+[source]: blob/master/lib/path-builder.rb
