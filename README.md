@@ -114,4 +114,4 @@ Bug reports and pull requests are welcome on GitHub at https://github.com/[USERN
 
 The gem is available as open source under the terms of the [MIT License](http://opensource.org/licenses/MIT).
 
-[source]: blob/master/lib/path-builder.rb
+[source]: lib/path-builder.rb
