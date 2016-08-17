@@ -32,22 +32,22 @@ path = PathBuilder.new
 path.api.moo.to_s #=> 'api/moo/'
 ```
 
-Add a variable path segment:
+Make it variable:
 ```ruby
 path = PathBuilder.new
 path.api.(:version).moo.to_s('v1') #=> 'api/v1/moo/'
-```
-
-Or use `#[]` instead of `#to_s`:
-```ruby
-path = PathBuilder.new
-path.api.(:version).moo['v1'] #=> 'api/v1/moo/'
 ```
 
 Why is that dot there? Because Ruby. Can we remove the dot? Yes, because Ruby:
 ```ruby
 path = PathBuilder.new
 path.api(:version).moo['v1'] #=> 'api/v1/moo/'
+```
+
+Or use `#[]` instead of `#to_s`:
+```ruby
+path = PathBuilder.new
+path.api.(:version).moo['v1'] #=> 'api/v1/moo/'
 ```
 
 Use it out of the box:
@@ -58,8 +58,7 @@ PathBuilder.new.api(:version).moo['v1'] #=> 'api/v1/moo/'
 Put in a url:
 ```ruby
 path = PathBuilder.new
-path[] = 'http://example.com'
-path.api(:version).moo.to_s #=> 'http://example.com/api/v1/moo'
+path.('http://example.com').api(:version).moo[] #=> 'http://example.com/api/v1/moo/'
 ```
 
 Reuse it:
@@ -80,7 +79,7 @@ UsersPath = ApiPath.users(:user_id).save!
 
 UsersPath.new.to_s #=> 'api/v1/users/user_id/'
 UsersPath.new.to_s(break_on_empty: true) #=> 'api/v1/users/'
-UsersPath.new.to_s(1, break_on_empty: true) #=> 'api/v1/users/1'
+UsersPath.new.to_s(1, break_on_empty: true) #=> 'api/v1/users/1/'
 
 # Or just:
 
@@ -88,11 +87,23 @@ UsersPath.break_on_empty = true # PROTIP: You can set PathBuilder#break_on_empty
 
 UsersPath.new[] #=> 'api/v1/users/'
 UsersPath.new[nil] #=> 'api/v1/users/'
-UsersPath.new['1'] #=> 'api/v1/users/1'
-UsersPath.new.comments[] #=> 'api/v1/users'
+UsersPath.new['1'] #=> 'api/v1/users/1/'
+UsersPath.new.comments[] #=> 'api/v1/users/'
 UsersPath.new.comments['1'] #=> 'api/v1/users/1/comments/'
 UsersPath.new.comments(:comment_id).post['1'] #=> 'api/v1/users/1/comments/'
-UsersPath.new.comments(:comment_id).post['1', '2'] #=> 'api/v1/users/1/comments/2/post'
+UsersPath.new.comments(:comment_id).post['1', '2'] #=> 'api/v1/users/1/comments/2/post/'
+```
+
+Make a mistake? Take it away!
+
+```ruby
+path = UsersPath.new.comments(:comment_id).post.oops
+path['1','2'] #=> 'api/v1/users/1/comments/2/post/oops/'
+path - 1 #=> [:oops]
+path['1', '2'] #=> 'api/v1/user/1/comments/2/post/'
+path.oh.nose.this.shouldnt.be.here['1,2'] #=> 'api/v1/user/1/comments/2/post/oh/nose/this/shouldnt/be/here/'
+path - 6 #=> [:oh, :nose, :this, :shouldnt, :be, :here]
+path['1,2'] #=> #=> 'api/v1/user/1/comments/2/post/'
 ```
 
 Curious on how it works? Read the 88 line [source].

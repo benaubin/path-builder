@@ -41,20 +41,7 @@ class PathBuilder
 
   # Add a variable segment (symbol)
   def call(segment)
-    @path << segment.to_sym
-    self
-  end
-
-  # Add a segment (string)
-  def []=(*args)
-    if args.length = 1
-      segment = *args
-      @path << segment.to_s if segment
-    else
-      variable_segment, *segment = *args
-      @path << variable_segment.to_sym if variable_segment
-      @path += segment.map(&:to_s)
-    end
+    @path << segment
     self
   end
 
