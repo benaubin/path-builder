@@ -1,11 +1,11 @@
 # coding: utf-8
 lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require 'path-builder/version'
+require 'path-builder'
 
 Gem::Specification.new do |spec|
   spec.name          = "path-builder"
-  spec.version       = PathBuilder::VERSION
+  spec.version       = PathBuilder.version
   spec.authors       = ["Ben"]
   spec.email         = ["ben@bensites.com"]
 

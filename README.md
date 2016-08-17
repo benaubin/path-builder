@@ -28,38 +28,31 @@ require 'path-builder'
 
 Make a path:
 ```ruby
-path = PathBuilder.new
-path.api.moo.to_s #=> 'api/moo/'
+PathBuilder.new.api.moo.to_s #=> 'api/moo/'
 ```
 
 Make it variable:
 ```ruby
-path = PathBuilder.new
-path.api.(:version).moo.to_s('v1') #=> 'api/v1/moo/'
+PathBuilder.new.api.(:version).moo.to_s('v1') #=> 'api/v1/moo/'
 ```
 
 Why is that dot there? Because Ruby. Can we remove the dot? Yes, because Ruby:
 ```ruby
-path = PathBuilder.new
-path.api(:version).moo['v1'] #=> 'api/v1/moo/'
+PathBuilder.new.api(:version).moo['v1'] #=> 'api/v1/moo/'
 ```
 
 Or use `#[]` instead of `#to_s`:
 ```ruby
-path = PathBuilder.new
-path.api.(:version).moo['v1'] #=> 'api/v1/moo/'
-```
-
-Use it out of the box:
-```ruby
 PathBuilder.new.api(:version).moo['v1'] #=> 'api/v1/moo/'
 ```
 
-Put in a url:
+Put in a url with a string:
 ```ruby
-path = PathBuilder.new
-path.('http://example.com').api(:version).moo[] #=> 'http://example.com/api/v1/moo/'
+PathBuilder.new.('http://example.com').api(:version).moo[] #=> 'http://example.com/api/v1/moo/'
+# Remove the dot:
+PathBuilder.new('http://example.com').api(:version).moo[] #=> 'http://example.com/api/v1/moo/'
 ```
+
 
 Reuse it:
 ```ruby
@@ -106,7 +99,13 @@ path - 6 #=> [:oh, :nose, :this, :shouldnt, :be, :here]
 path['1,2'] #=> #=> 'api/v1/user/1/comments/2/post/'
 ```
 
-Curious on how it works? Read the 88 line [source].
+Or add it together:
+
+```ruby
+(PathBuilder.new('http://example.com') + UsersPath.new)['1'] #=> 'http://example.com/api/v1/users/1/'
+```
+
+Curious on how it works? Read the < 100 line [source].
 
 Have fun.
 
